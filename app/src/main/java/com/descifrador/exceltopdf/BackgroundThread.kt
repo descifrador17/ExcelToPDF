@@ -23,7 +23,10 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class BackgroundThread(val filename : String,val progressTextView : TextView,val progressBar : ProgressBar) : Thread() {
+class BackgroundThread(val filename : String,
+                       val progressTextView : TextView,
+                       val progressBar : ProgressBar,
+                       val showHeader : Boolean) : Thread() {
 
     val threadhandler = Handler(Looper.getMainLooper())
 
@@ -76,7 +79,7 @@ class BackgroundThread(val filename : String,val progressTextView : TextView,val
                 savePDF(data, rowno)
                 rowno++
             }
-            progressBar.visibility = View.GONE
+            progressBar.visibility = View.INVISIBLE
         }
 
         catch (e : Exception){
@@ -100,6 +103,12 @@ class BackgroundThread(val filename : String,val progressTextView : TextView,val
             mDoc.addAuthor("Descifrador")
             mDoc.pageSize = PageSize.A4
 
+            if(showHeader){
+                val header : Paragraph = Paragraph("Details Row $rowno")
+                header.alignment = Paragraph.ALIGN_RIGHT
+                mDoc.add(header)
+            }
+
             mDoc.add(Paragraph(data,fontsize_14))
             mDoc.close()
         }
@@ -107,11 +116,6 @@ class BackgroundThread(val filename : String,val progressTextView : TextView,val
             Log.e("Background",e.toString())
         }
 
-        fun ShowHeader(){
-            val header : Paragraph = Paragraph("Details Row $rowno")
-            header.alignment = Paragraph.ALIGN_RIGHT
-            mDoc.add(header)
-        }
     }
 
 }

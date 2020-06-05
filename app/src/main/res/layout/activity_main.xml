@@ -11,7 +11,7 @@
         android:id="@+id/btnViewSDCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="60dp"
         android:backgroundTint="@color/colorPrimaryDark"
         android:text="Upload Excel File"
         android:textColor="#FFFFFF"
@@ -36,37 +36,47 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
         android:indeterminate="true"
         android:indeterminateTint="@color/colorAccent"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/progressTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/convertView"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/convertView" />
 
     <Button
         android:id="@+id/convertView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="50dp"
         android:backgroundTint="@color/colorAccent"
         android:text="Convert File"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fileNameView" />
+        app:layout_constraintTop_toBottomOf="@+id/pdfFileHeaderRadio" />
 
     <TextView
         android:id="@+id/progressTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="100dp"
         android:text="Progress"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/progressBar"
-        app:layout_constraintStart_toStartOf="@+id/progressBar" />
+        app:layout_constraintStart_toStartOf="@+id/progressBar"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Switch
+        android:id="@+id/pdfFileHeaderRadio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="Pdf File Header"
+        app:layout_constraintEnd_toEndOf="@+id/fileNameView"
+        app:layout_constraintStart_toStartOf="@+id/fileNameView"
+        app:layout_constraintTop_toBottomOf="@+id/fileNameView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

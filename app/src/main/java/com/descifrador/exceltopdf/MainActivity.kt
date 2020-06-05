@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -24,7 +23,8 @@ class MainActivity : AppCompatActivity() {
         checkFilePermission()
 
         btnViewSDCard.setOnClickListener{
-            progressTextView.visibility = View.GONE
+            pdfFileHeaderRadio.visibility = View.VISIBLE
+            progressTextView.visibility = View.INVISIBLE
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             val uri = Uri.parse(Environment.getExternalStorageDirectory().path + resources.getString(R.string.app_name))
             intent.setDataAndType(uri, "*/*")
@@ -50,7 +50,9 @@ class MainActivity : AppCompatActivity() {
                     convertView.setOnClickListener{
                         progressBar.visibility = View.VISIBLE
                         progressTextView.text = "Progress"
-                        val thread = BackgroundThread(filename,progressTextView,progressBar)
+                        val showHeader = pdfFileHeaderRadio.isChecked
+                        pdfFileHeaderRadio.visibility = View.INVISIBLE
+                        val thread = BackgroundThread(filename,progressTextView,progressBar,showHeader)
                         thread.start()
                     }
                 }
