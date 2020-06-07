@@ -8,15 +8,20 @@ import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
-import com.itextpdf.text.*
-import com.itextpdf.text.pdf.PdfWriter
+import com.itextpdf.kernel.geom.PageSize
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfWriter
+import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.Cell
+import com.itextpdf.layout.element.Paragraph
+import com.itextpdf.layout.element.Table
+import com.itextpdf.layout.property.TextAlignment
 import org.apache.poi.xssf.usermodel.XSSFCell
 import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
 import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
@@ -68,7 +73,7 @@ class BackgroundThread(val filename : String,
                 var colno = 0
                 while (cellIterator.hasNext()) {
                     val currentCell = cellIterator.next() as XSSFCell
-                    data += headings[colno] + " : " + currentCell.toString() + "\n"
+                    data += headings[colno] + ":" + currentCell.toString() + ";"
                     colno++
                 }
                 completedata += data
@@ -89,27 +94,38 @@ class BackgroundThread(val filename : String,
 
     @SuppressLint("SimpleDateFormat")
     fun savePDF(data : String, rowno:Int){
-        val mDoc = com.itextpdf.text.Document()
+
         val mFileName = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(System.currentTimeMillis())+"$rowno"
         val mFilePath : String = "${Environment.getExternalStorageDirectory()}/$mFileName.pdf"
 
         try{
-            PdfWriter.getInstance(mDoc, FileOutputStream(mFilePath))
-            mDoc.open()
+            val writer : PdfWriter = PdfWriter(mFilePath)
+            val pdfDoc = PdfDocument(writer)
+            val mDoc = Document(pdfDoc)
 
-            val fontsize_14 : Font = FontFactory.getFont(FontFactory.HELVETICA,14f)
-            val fontsize_16 : Font = FontFactory.getFont(FontFactory.HELVETICA,16f)
 
-            mDoc.addAuthor("Descifrador")
-            mDoc.pageSize = PageSize.A4
+            mDoc.getPageEffectiveArea(PageSize.A4)
+            mDoc.setFontSize(14f)
 
             if(showHeader){
-                val header : Paragraph = Paragraph("Details Row $rowno")
-                header.alignment = Paragraph.ALIGN_RIGHT
+                val header : Paragraph = Paragraph("Details Row $rowno\n")
+                header.setTextAlignment(TextAlignment.CENTER).setBold().setFontSize(16f)
                 mDoc.add(header)
             }
 
-            mDoc.add(Paragraph(data,fontsize_14))
+            val pointColumnWidths = floatArrayOf((PageSize.A4.width/2.0f),(PageSize.A4.width/2.0f) )
+            val table = Table(pointColumnWidths)
+
+            val completeData = data.split(";").toTypedArray()
+            for(i in 0 until completeData.size-1){
+                val one_row = completeData[i]
+                val heading = one_row.substringBefore(":").trim()
+                val detail = one_row.substringAfter(":").trim()
+                table.addCell(Cell().add(heading).setBold())
+                table.addCell(Cell().add(detail))
+            }
+
+            mDoc.add(table)
             mDoc.close()
         }
         catch (e : Exception){
