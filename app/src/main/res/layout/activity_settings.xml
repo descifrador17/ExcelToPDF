@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Settings"
+    tools:layout_editor_absoluteY="81dp">
+
+    <TextView
+        android:id="@+id/settingsMenuText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/montserrat_bold"
+        android:text="Document Settings"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/pageSizeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/montserrat"
+        android:text="Page Size"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/settingsMenuText"
+        app:layout_constraintTop_toBottomOf="@+id/settingsMenuText" />
+
+    <TextView
+        android:id="@+id/pdfHeadingTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/montserrat"
+        android:text="PDF Heading"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/pageSizesSpinner"
+        app:layout_constraintTop_toBottomOf="@+id/pageSizesSpinner" />
+
+    <TextView
+        android:id="@+id/pdfHeadingSizeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/montserrat"
+        android:text="PDF Heading Size"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/headingEditView"
+        app:layout_constraintTop_toBottomOf="@+id/headingEditView" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/montserrat"
+        android:text="Document Font Size"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/headingSizeEditText"
+        app:layout_constraintTop_toBottomOf="@+id/headingSizeEditText" />
+
+    <Spinner
+        android:id="@+id/pageSizesSpinner"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/edittext_rounded_corners"
+        app:layout_constraintStart_toStartOf="@+id/pageSizeTextView"
+        app:layout_constraintTop_toBottomOf="@+id/pageSizeTextView" />
+
+    <EditText
+        android:id="@+id/headingEditView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/edittext_rounded_corners"
+        android:ems="18"
+        android:hint="Enter Heading"
+        android:inputType="textPersonName"
+        android:maxEms="10"
+        android:maxLines="1"
+        android:textAlignment="textStart"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/pdfHeadingTextView"
+        app:layout_constraintTop_toBottomOf="@+id/pdfHeadingTextView" />
+
+    <EditText
+        android:id="@+id/headingSizeEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/edittext_rounded_corners"
+        android:ems="5"
+        android:hint="16"
+
+        android:inputType="number"
+
+        android:maxLength="3"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/pdfHeadingSizeTextView"
+        app:layout_constraintTop_toBottomOf="@+id/pdfHeadingSizeTextView" />
+
+    <EditText
+        android:id="@+id/fontSizeEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/edittext_rounded_corners"
+        android:ems="5"
+        android:hint="14"
+        android:inputType="number"
+        android:maxLength="3"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/textView5"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="205dp" />
+
+    <Button
+        android:id="@+id/saveSettingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/colorAccent"
+        android:text="Save"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

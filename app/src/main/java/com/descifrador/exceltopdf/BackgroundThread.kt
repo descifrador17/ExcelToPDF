@@ -1,6 +1,7 @@
 package com.descifrador.exceltopdf
 
 import android.annotation.SuppressLint
+import android.content.SharedPreferences
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
@@ -8,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
@@ -28,17 +30,18 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class BackgroundThread(val filename : String,
-                       val progressTextView : TextView,
-                       val progressBar : ProgressBar,
-                       val showHeader : Boolean) : Thread() {
+class BackgroundThread(
+    private val filename : String,
+    private val progressTextView : TextView,
+    private val progressBar : ProgressBar) : Thread() {
 
-    val threadhandler = Handler(Looper.getMainLooper())
+    private val threadHandler = Handler(Looper.getMainLooper())
 
     override fun run() {
-        threadhandler.post(Runnable {
+
+        threadHandler.post{
             progressTextView.visibility = View.VISIBLE
-        })
+        }
         readExcelData("/storage/emulated/0/${filename}")
     }
 
@@ -52,8 +55,7 @@ class BackgroundThread(val filename : String,
             val sheet: XSSFSheet = workbook.getSheetAt(0)
 
             val totalRows = sheet.physicalNumberOfRows
-
-            var headings = ArrayList<String>()
+            val headings = ArrayList<String>()
 
             val row = sheet.getRow(0)
             val cellIter = row.cellIterator()
@@ -78,9 +80,9 @@ class BackgroundThread(val filename : String,
                 }
                 completedata += data
 
-                threadhandler.post(Runnable {
+                threadHandler.post{
                     progressTextView.text = "$rowno/${totalRows - 1}"
-                })
+                }
                 savePDF(data, rowno)
                 rowno++
             }
@@ -99,28 +101,25 @@ class BackgroundThread(val filename : String,
         val mFilePath : String = "${Environment.getExternalStorageDirectory()}/$mFileName.pdf"
 
         try{
+
             val writer : PdfWriter = PdfWriter(mFilePath)
             val pdfDoc = PdfDocument(writer)
-            val mDoc = Document(pdfDoc)
+            val mDoc = Document(pdfDoc, PageSize(document_settings.pageSize))
 
+            mDoc.setFontSize(document_settings.documentFontSize)
 
-            mDoc.getPageEffectiveArea(PageSize.A4)
-            mDoc.setFontSize(14f)
+            val header = Paragraph(document_settings.heading)
+            header.setTextAlignment(TextAlignment.CENTER).setBold().setFontSize(document_settings.headingSize)
+            mDoc.add(header)
 
-            if(showHeader){
-                val header : Paragraph = Paragraph("Details Row $rowno\n")
-                header.setTextAlignment(TextAlignment.CENTER).setBold().setFontSize(16f)
-                mDoc.add(header)
-            }
-
-            val pointColumnWidths = floatArrayOf((PageSize.A4.width/2.0f),(PageSize.A4.width/2.0f) )
+            val pointColumnWidths = floatArrayOf(((document_settings.pageSize.width)/2.0f),((document_settings.pageSize.width)/2.0f) )
             val table = Table(pointColumnWidths)
 
             val completeData = data.split(";").toTypedArray()
             for(i in 0 until completeData.size-1){
-                val one_row = completeData[i]
-                val heading = one_row.substringBefore(":").trim()
-                val detail = one_row.substringAfter(":").trim()
+                val oneRow = completeData[i]
+                val heading = oneRow.substringBefore(":").trim()
+                val detail = oneRow.substringAfter(":").trim()
                 table.addCell(Cell().add(heading).setBold())
                 table.addCell(Cell().add(detail))
             }
