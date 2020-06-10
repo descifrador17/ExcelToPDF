@@ -27,3 +27,9 @@ Following are the notable features of iText library −
 -   **Canvas**  − iText library provides you a Canvas class using which you can draw various geometrical shapes on a PDF document like circle, line, etc.
     
 -   **Create PDFs**  − Using iText, you can create a new PDF file from your Java programs. You can include images and fonts too.
+
+## Update
+1. User can select Page Sizes (A0 to B10)
+2. Add custom heading to the PDF
+3. Variable Heading and Document size
+  
