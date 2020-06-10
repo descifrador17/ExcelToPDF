@@ -1,7 +1,6 @@
 package com.descifrador.exceltopdf
 
 import android.annotation.SuppressLint
-import android.content.SharedPreferences
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
@@ -9,7 +8,6 @@ import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
@@ -18,6 +16,10 @@ import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.property.TextAlignment
+import org.apache.poi.hssf.usermodel.HSSFCell
+import org.apache.poi.hssf.usermodel.HSSFRow
+import org.apache.poi.hssf.usermodel.HSSFSheet
+import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.xssf.usermodel.XSSFCell
 import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFSheet
@@ -38,7 +40,7 @@ class BackgroundThread(
     private val threadHandler = Handler(Looper.getMainLooper())
 
     override fun run() {
-
+        Log.e("Back","Run")
         threadHandler.post{
             progressTextView.visibility = View.VISIBLE
         }
@@ -47,51 +49,110 @@ class BackgroundThread(
 
     @SuppressLint("SimpleDateFormat", "SetTextI18n")
     private fun readExcelData(filePath : String){
-        val inputFile = File(filePath)
-
         try {
-            val inputStream: InputStream = FileInputStream(inputFile)
-            val workbook = XSSFWorkbook(inputStream)
-            val sheet: XSSFSheet = workbook.getSheetAt(0)
+            val inputFilename: String = File(filePath).name
+            when (inputFilename.substring(inputFilename.lastIndexOf(".") + 1, inputFilename.length)) {
+                "xls" -> {
+                    readXLSSheet(filePath)
 
-            val totalRows = sheet.physicalNumberOfRows
-            val headings = ArrayList<String>()
-
-            val row = sheet.getRow(0)
-            val cellIter = row.cellIterator()
-            while(cellIter.hasNext()){
-                val myCell = cellIter.next() as XSSFCell
-                headings.add(myCell.toString())
-            }
-
-            var completedata = ""
-            val rowIter = sheet.rowIterator()
-            rowIter.next()
-            var rowno = 1
-            while (rowIter.hasNext()) {
-                var data = ""
-                val currentRow = rowIter.next() as XSSFRow
-                val cellIterator = currentRow.cellIterator()
-                var colno = 0
-                while (cellIterator.hasNext()) {
-                    val currentCell = cellIterator.next() as XSSFCell
-                    data += headings[colno] + ":" + currentCell.toString() + ";"
-                    colno++
                 }
-                completedata += data
-
-                threadHandler.post{
-                    progressTextView.text = "$rowno/${totalRows - 1}"
+                "xlsx" -> {
+                    readXLSXSheet(filePath)
                 }
-                savePDF(data, rowno)
-                rowno++
+                else ->{
+                    Log.e("Back","Error in file format")
+                    threadHandler.post{
+                        progressTextView.text = "Please select Correct File Format"
+                        progressBar.visibility = View.INVISIBLE
+                    }
+                }
             }
-            progressBar.visibility = View.INVISIBLE
         }
-
         catch (e : Exception){
-            Log.e("Main",e.toString())
+            Log.e("Back",e.toString())
         }
+    }
+
+
+    @SuppressLint("SetTextI18n")
+    private fun readXLSSheet(filePath: String){
+        val inputFile : File = File(filePath)
+        val inputStream: InputStream = FileInputStream(inputFile)
+        val workbook = HSSFWorkbook(inputStream)
+        val sheet: HSSFSheet = workbook.getSheetAt(0)
+        val totalRows = sheet.physicalNumberOfRows
+        val headings = ArrayList<String>()
+
+        val row = sheet.getRow(0)
+        val cellIter = row.cellIterator()
+        while(cellIter.hasNext()){
+            val myCell = cellIter.next() as HSSFCell
+            headings.add(myCell.toString())
+        }
+
+        var completedata = ""
+        val rowIter = sheet.rowIterator()
+        rowIter.next()
+        var rowno = 1
+        while (rowIter.hasNext()) {
+            var data = ""
+            val currentRow = rowIter.next() as HSSFRow
+            val cellIterator = currentRow.cellIterator()
+            var colno = 0
+            while (cellIterator.hasNext()) {
+                val currentCell = cellIterator.next() as HSSFCell
+                data += headings[colno] + ":" + currentCell.toString() + ";"
+                colno++
+            }
+            completedata += data
+
+            threadHandler.post{
+                progressTextView.text = "$rowno/${totalRows - 1}"
+            }
+            savePDF(data, rowno)
+            rowno++
+        }
+        progressBar.visibility = View.INVISIBLE
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun readXLSXSheet(filePath: String){
+        val inputFile : File = File(filePath)
+        val inputStream: InputStream = FileInputStream(inputFile)
+        val workbook = XSSFWorkbook(inputStream)
+        val sheet: XSSFSheet = workbook.getSheetAt(0)
+        val totalRows = sheet.physicalNumberOfRows
+        val headings = ArrayList<String>()
+
+        val row = sheet.getRow(0)
+        val cellIter = row.cellIterator()
+        while(cellIter.hasNext()){
+            val myCell = cellIter.next() as XSSFCell
+            headings.add(myCell.toString())
+        }
+        var completedata = ""
+        val rowIter = sheet.rowIterator()
+        rowIter.next()
+        var rowno = 1
+        while (rowIter.hasNext()) {
+            var data = ""
+            val currentRow = rowIter.next() as XSSFRow
+            val cellIterator = currentRow.cellIterator()
+            var colno = 0
+            while (cellIterator.hasNext()) {
+                val currentCell = cellIterator.next() as XSSFCell
+                data += headings[colno] + ":" + currentCell.toString() + ";"
+                colno++
+            }
+            completedata += data
+
+            threadHandler.post{
+                progressTextView.text = "$rowno/${totalRows - 1}"
+            }
+            savePDF(data, rowno)
+            rowno++
+        }
+        progressBar.visibility = View.INVISIBLE
     }
 
     @SuppressLint("SimpleDateFormat")
